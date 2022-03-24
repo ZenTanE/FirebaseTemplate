@@ -75,6 +75,7 @@ public class PostsHomeFragment extends AppFragment {
             Post post = postsList.get(position);
             holder.binding.contenido.setText(post.content);
             holder.binding.autor.setText(post.authorName);
+            Glide.with(requireContext()).load(post.authorImageUrl).into(holder.binding.autorFoto);
             Glide.with(requireContext()).load(post.imageUrl).into(holder.binding.imagen);
 
             holder.binding.favorito.setOnClickListener(v -> {

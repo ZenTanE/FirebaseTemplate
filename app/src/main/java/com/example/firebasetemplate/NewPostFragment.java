@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.example.firebasetemplate.databinding.FragmentNewPostBinding;
 import com.example.firebasetemplate.model.Post;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -35,6 +36,7 @@ public class NewPostFragment extends AppFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // para abrir la galeria
         binding.previsualizacion.setOnClickListener(v -> galeria.launch("image/*"));
 
         appViewModel.uriImagenSeleccionada.observe(getViewLifecycleOwner(), uri -> {
@@ -54,7 +56,10 @@ public class NewPostFragment extends AppFragment {
                     .addOnSuccessListener(urlDescarga -> {
                         Post post = new Post();
                         post.content = binding.contenido.getText().toString();
-                        post.authorName = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                        //post.authorName = auth.getCurrentUser().getEmail(); // this is the OG
+                        post.authorName = auth.getCurrentUser().getDisplayName();
+                        //post.authorImageUrl = auth.getCurrentUser().getPhotoUrl().toString();
+
                         post.date = LocalDateTime.now().toString();
                         post.imageUrl = urlDescarga.toString();
 
@@ -71,6 +76,8 @@ public class NewPostFragment extends AppFragment {
         });
     }
 
+    // cuando se cierra la galeria
+    // la variable 'uri' es la foto que ha seleccionado el usuario
     private final ActivityResultLauncher<String> galeria = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
         appViewModel.setUriImagenSeleccionada(uri);
     });
